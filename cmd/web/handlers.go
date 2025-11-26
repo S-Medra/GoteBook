@@ -1,8 +1,9 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net/http"
+	"strconv"
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
@@ -15,7 +16,12 @@ func home(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello it's GoteBook"))
 }
 func noteView(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Display a note"))
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil || id < 1 {
+		http.NotFound(w, r)
+		return
+	}
+	fmt.Fprintf(w, "Display the note with ID: %d", id)
 }
 
 func noteCreate(w http.ResponseWriter, r *http.Request) {
@@ -25,15 +31,4 @@ func noteCreate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
 	w.Write([]byte("Create a note"))
-}
-
-func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/note/view", noteView)
-	mux.HandleFunc("/note/create", noteCreate)
-
-	log.Println("Server Starting on port : 8888")
-	err := http.ListenAndServe(":8888", mux)
-	log.Fatal(err)
 }
