@@ -7,6 +7,10 @@ import (
 
 func main() {
 	mux := http.NewServeMux()
+
+	fileserver := http.FileServer(http.Dir("./ui/static/"))
+	mux.Handle("/static/", http.StripPrefix("/static", fileserver))
+
 	mux.HandleFunc("/", home)
 	mux.HandleFunc("/note/view", noteView)
 	mux.HandleFunc("/note/create", noteCreate)
