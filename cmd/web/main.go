@@ -25,19 +25,10 @@ func main() {
 		infoLog:  infoLog,
 	}
 
-	mux := http.NewServeMux()
-
-	fileserver := http.FileServer(http.Dir("./ui/static/"))
-	mux.Handle("/static/", http.StripPrefix("/static", fileserver))
-
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/note/view", app.noteView)
-	mux.HandleFunc("/note/create", app.noteCreate)
-
 	srv := &http.Server{
 		Addr:     *addr,
 		ErrorLog: errorLog,
-		Handler:  mux,
+		Handler:  app.routes(),
 	}
 
 	infoLog.Printf("Server Starting on port%s", *addr)
