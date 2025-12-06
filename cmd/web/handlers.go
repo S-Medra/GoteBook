@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"github.com/S-Medra/GoteBook/internal/models"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -37,7 +39,16 @@ func (app *application) noteView(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
-	fmt.Fprintf(w, "Display the note with ID: %d", id)
+	note, err := app.notes.Get(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+	fmt.Fprintf(w, "%+v", note)
 }
 
 func (app *application) noteCreate(w http.ResponseWriter, r *http.Request) {

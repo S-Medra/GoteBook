@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"time"
 )
 
@@ -33,7 +34,19 @@ func (m *NoteModel) Insert(title string, content string, expires int) (int, erro
 }
 
 func (m *NoteModel) Get(id int) (*Note, error) {
-	return nil, nil
+	stmt := `SELECT id, title, content, created, expires FROM notes
+	WHERE expires > UTC_TIMESTAMP() AND id = ?`
+	row := m.DB.QueryRow(stmt, id)
+	n := &Note{}
+	err := row.Scan(&n.ID, &n.Title, &n.Content, &n.Created, &n.Expires)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNoRecord
+		} else {
+			return nil, err
+		}
+	}
+	return n, nil
 }
 
 func (m *NoteModel) Latest() ([]*Note, error) {
