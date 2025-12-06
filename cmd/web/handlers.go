@@ -46,5 +46,14 @@ func (app *application) noteCreate(w http.ResponseWriter, r *http.Request) {
 
 		app.clientError(w, http.StatusMethodNotAllowed)
 	}
-	w.Write([]byte("Create a note"))
+	title := "0 snail"
+	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n- Kobayashi Issa"
+	expires := 7
+
+	id, err := app.notes.Insert(title, content, expires)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	http.Redirect(w, r, fmt.Sprintf("/note/view?id=%d", id), http.StatusSeeOther)
 }
