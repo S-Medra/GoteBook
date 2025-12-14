@@ -3,17 +3,20 @@ package main
 import (
 	"database/sql"
 	"flag"
-	"github.com/S-Medra/GoteBook/internal/models"
-	_ "github.com/go-sql-driver/mysql"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/S-Medra/GoteBook/internal/models"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type application struct {
-	errorLog *log.Logger
-	infoLog  *log.Logger
-	notes    *models.NoteModel
+	errorLog      *log.Logger
+	infoLog       *log.Logger
+	notes         *models.NoteModel
+	templateCache map[string]*template.Template
 }
 
 func main() {
@@ -33,10 +36,16 @@ func main() {
 
 	defer db.Close()
 
+	templateCache, err := newTemplateCache()
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+
 	app := &application{
-		errorLog: errorLog,
-		infoLog:  infoLog,
-		notes:    &models.NoteModel{DB: db},
+		errorLog:      errorLog,
+		infoLog:       infoLog,
+		notes:         &models.NoteModel{DB: db},
+		templateCache: templateCache,
 	}
 
 	srv := &http.Server{
