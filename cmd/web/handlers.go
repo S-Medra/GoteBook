@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/S-Medra/GoteBook/internal/models"
-	//"html/template"
+	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -49,6 +49,7 @@ func (app *application) noteView(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
+
 	note, err := app.notes.Get(id)
 	if err != nil {
 		if errors.Is(err, models.ErrNoRecord) {
@@ -58,7 +59,27 @@ func (app *application) noteView(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	fmt.Fprintf(w, "%+v", note)
+
+	files := []string{
+		"./ui/html/base.html",
+		"./ui/html/components/nav.html",
+		"./ui/html/components/view.html",
+	}
+
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	data := &templateData{
+		Note: note,
+	}
+
+	err = ts.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		app.serverError(w, err)
+	}
 }
 
 func (app *application) noteCreate(w http.ResponseWriter, r *http.Request) {
