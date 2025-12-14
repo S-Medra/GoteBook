@@ -22,10 +22,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, note := range notes {
-		fmt.Fprintf(w, "%+v\n", note)
-	}
-	/* files := []string{
+	files := []string{
 		"./ui/html/base.html",
 		"./ui/html/components/nav.html",
 		"./ui/html/pages/home.html",
@@ -36,12 +33,14 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	err = ts.ExecuteTemplate(w, "base", nil)
+	data := &templateData{
+		Notes: notes,
+	}
+
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
-		app.errorLog.Println(err.Error())
 		app.serverError(w, err)
-		return
-	} */
+	}
 }
 func (app *application) noteView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
