@@ -21,9 +21,10 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, http.StatusOK, "home.html", &templateData{
-		Notes: notes,
-	})
+	data := app.newTemplateData(r)
+	data.Notes = notes
+
+	app.render(w, http.StatusOK, "home.html", data)
 }
 func (app *application) noteView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
@@ -42,9 +43,10 @@ func (app *application) noteView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, http.StatusOK, "view.html", &templateData{
-		Note: note,
-	})
+	data := app.newTemplateData(r)
+	data.Note = note
+
+	app.render(w, http.StatusOK, "view.html", data)
 }
 
 func (app *application) noteCreate(w http.ResponseWriter, r *http.Request) {
