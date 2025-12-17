@@ -9,7 +9,7 @@
  </tr>
  {{range .Notes}}
  <tr>
-  <td><a href="/note/view?id={{.ID}}">{{.Title}}</a></td>
+  <td><a href="/note/view/{{.ID}}">{{.Title}}</a></td>
   <td>{{readableDate .Created}}</td>
   <td>{{.Created}}</td>
   <td>#{{.ID}}</td>

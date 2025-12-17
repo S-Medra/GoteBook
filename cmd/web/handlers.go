@@ -3,17 +3,14 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/S-Medra/GoteBook/internal/models"
 	"net/http"
 	"strconv"
+
+	"github.com/S-Medra/GoteBook/internal/models"
+	"github.com/julienschmidt/httprouter"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-
-	if r.URL.Path != "/" {
-		app.notFound(w)
-		return
-	}
 
 	notes, err := app.notes.Latest()
 	if err != nil {
@@ -27,7 +24,10 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.render(w, http.StatusOK, "home.html", data)
 }
 func (app *application) noteView(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+
+	params := httprouter.ParamsFromContext(r.Context())
+
+	id, err := strconv.Atoi(params.ByName("id"))
 	if err != nil || id < 1 {
 		app.notFound(w)
 		return
@@ -50,11 +50,11 @@ func (app *application) noteView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) noteCreate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", http.MethodPost)
+	w.Write([]byte("Display the form for writing a new note"))
+}
 
-		app.clientError(w, http.StatusMethodNotAllowed)
-	}
+func (app *application) noteCreatePost(w http.ResponseWriter, r *http.Request) {
+
 	title := "0 snail"
 	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n- Kobayashi Issa"
 	expires := 7
@@ -64,5 +64,5 @@ func (app *application) noteCreate(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	http.Redirect(w, r, fmt.Sprintf("/note/view?id=%d", id), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/note/view/%d", id), http.StatusSeeOther)
 }
