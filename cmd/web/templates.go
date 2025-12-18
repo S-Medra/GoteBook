@@ -12,6 +12,7 @@ type templateData struct {
 	CurrentYear int
 	Note        *models.Note
 	Notes       []*models.Note
+	Form        any
 }
 
 func readableDate(t time.Time) string {
