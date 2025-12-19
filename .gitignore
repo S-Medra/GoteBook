@@ -20,6 +20,12 @@ profile.cov
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
+#TLS
+tls/
+*.key
+*.pem
+*.crt
+
 # Go workspace file
 go.work
 go.work.sum
