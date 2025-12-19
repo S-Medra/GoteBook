@@ -13,6 +13,7 @@ type templateData struct {
 	Note        *models.Note
 	Notes       []*models.Note
 	Form        any
+	Flash       string
 }
 
 func readableDate(t time.Time) string {
