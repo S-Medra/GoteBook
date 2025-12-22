@@ -20,11 +20,11 @@ import (
 type application struct {
 	errorLog       *log.Logger
 	infoLog        *log.Logger
-	notes          *models.NoteModel
+	notes          models.NoteModelInterface
 	templateCache  map[string]*template.Template
 	formDecoder    *form.Decoder
 	sessionManager *scs.SessionManager
-	users          *models.UserModel
+	users          models.UserModelInterface
 }
 
 func main() {
