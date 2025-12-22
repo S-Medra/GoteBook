@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 	"time"
+
+	"github.com/S-Medra/GoteBook/internal/assert"
 )
 
 func TestReadableDate(t *testing.T) {
@@ -32,9 +34,7 @@ func TestReadableDate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			hd := readableDate(tt.tm)
 
-			if hd != tt.want {
-				t.Errorf("got %q; want %q", hd, tt.want)
-			}
+			assert.Equal(t, hd, tt.want)
 		})
 	}
 
